@@ -1,23 +1,18 @@
-version: 0.2
+version: 0.0
 os: linux
 files:
-  - source: /index.html
-    destination: /var/www/html/
-phases:
-  install:
-    commands:
-        - location: scripts/install_dependencies
-          timeout: 300
-          runas: root
-        - location: scripts/start_server
-          timeout: 300
-          runas: root
-  pre_build:
-    commands:
-        - echo Prebuild.
-  build:
-    commands:
-        - echo build..
-  post_build:
-    commands:
-        - echo post_build..
+  - source: /
+    destination: /web/
+hooks:
+  AfterInstall:
+    - location: scripts/mkdir.sh
+      timeout: 300
+      runas: root
+  ApplicationStart:
+    - location: scripts/start_flask.sh
+      timeout: 300
+      runas: root
+  ApplicationStop:
+    - location: scripts/stop_flask1.sh
+      timeout: 300
+      runas: root
