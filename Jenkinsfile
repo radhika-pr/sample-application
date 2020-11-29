@@ -21,7 +21,7 @@ pipeline {
         stage("prebuild"){
             steps{
                 echo "Clean everything copied from git repo"
-                fileOperations([fileDelteOperation(
+                fileOperations([fileDeleteOperation(
                     includes: "*"
                 )])
 
