@@ -20,7 +20,11 @@ pipeline {
         }
         stage("prebuild"){
             steps{
-                echo "Prebuild stage ${params.s3bucket}"
+                echo "Clean everything copied from git repo"
+                fileOperations([fileDelteOperation(
+                    includes: "*"
+                )])
+
                 
             }
         }
