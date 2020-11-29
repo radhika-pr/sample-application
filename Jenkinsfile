@@ -1,0 +1,22 @@
+pipeline {
+    agent any
+    environment{
+
+    }
+    parameters {
+        choice(name: 'branch', choices: ['main', 'staging', 'dev'], description: '')
+        string(name: 'accesskey', defaultValue: '', description: 'Access Key for aws')
+        password(name: 'secretkey', defaultValue: 'SECRET', description: 'Secret key for aws')
+        string(name: 's3bucket', defaultValue: '', description: 'S3 bucket for artifact')
+        string(name: 'buildproject', defaultValue: '', description: 'Code Build Project name')
+        string(name: 'artifact', defaultValue: '', description: 'Artifact Name with extension')
+    }
+    stages{
+        stage(){
+            steps{
+                echo "checkout the git repo from branch ${params.branch}"
+                git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
+            }
+        }
+    }
+}
