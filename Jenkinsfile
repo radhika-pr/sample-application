@@ -8,6 +8,9 @@ pipeline {
         string(name: 'buildproject', defaultValue: '', description: 'Code Build Project name')
         string(name: 'artifact', defaultValue: '', description: 'Artifact Name with extension')
     }
+    triggers {
+        cron('H */4 * * *')
+    }
     stages{
         stage("checkout"){
             steps{
@@ -15,16 +18,22 @@ pipeline {
                 git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
             }
         }
+        stage("prebuild"){
+            steps{
+                echo "Prebuild stage"
+                
+            }
+        }
         stage("build"){
             steps{
-                echo "checkout the git repo from branch ${params.branch}"
-                git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
+                echo "Build Stage"
+                
             }
         }
         stage("postbuild"){
             steps{
-                echo "checkout the git repo from branch ${params.branch}"
-                git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
+                echo "Clean Workspace"
+                cleanWs()
             }
         }
     }
