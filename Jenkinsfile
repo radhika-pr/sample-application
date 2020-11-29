@@ -20,13 +20,13 @@ pipeline {
         }
         stage("prebuild"){
             steps{
-                echo "Prebuild stage"
+                echo "Prebuild stage ${params.s3bucket}"
                 
             }
         }
         stage("build"){
             steps{
-                echo "Build Stage"
+                echo "Build Stage ${params.buildproject}"
                 
             }
         }
