@@ -47,7 +47,7 @@ pipeline {
         stage("checkout"){
             steps{
                 script{
-                    echo outputs[CodeBuildProjectName]
+                    echo outputs.CodeBuildProjectName
                 }
                 
                 echo "checkout the git repo from branch ${params.branch}"
