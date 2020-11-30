@@ -47,10 +47,10 @@ pipeline {
         stage("checkout"){
             steps{
                 script{
-                    env.buildproject = outputs.CodeBuildProjectName
-                    env.codedeployapp = outputs.CodeDeployApplicationName
-                    env.codedeploygroup = outputs.CodeDeployDeploymentGroup
-                    env.s3bucket = outputs.S3BucketName
+                    buildproject = outputs.CodeBuildProjectName
+                    codedeployapp = outputs.CodeDeployApplicationName
+                    codedeploygroup = outputs.CodeDeployDeploymentGroup
+                    s3bucket = outputs.S3BucketName
                 }
                 
                 echo "checkout the git repo from branch ${params.branch}"
