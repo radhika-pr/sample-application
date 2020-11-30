@@ -17,10 +17,12 @@ pipeline {
         cron("H */4 * * *")
     }
     stages{
-        stage("set environment"){
+        stage("setenvironment"){
             steps{
-                output = cfnDescribe(stack:"${stackname}")
-                echo "${output}"
+                withAWS(credentials: "${awscredentialId}",region: "${region}"){
+                    output = cfnDescribe(stack:"${stackname}")
+                    echo "${output}"
+                }
                 switch(env.branch) {
                     case 'staging':
                         env.awscredentialId = "staging-credentials-id"
