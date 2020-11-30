@@ -46,7 +46,10 @@ pipeline {
         }
         stage("checkout"){
             steps{
-                echo "${outputs[CodeBuildProjectName]}"
+                script{
+                    echo outputs[CodeBuildProjectName]
+                }
+                
                 echo "checkout the git repo from branch ${params.branch}"
                 git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
             }
