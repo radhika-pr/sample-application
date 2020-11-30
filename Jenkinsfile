@@ -18,24 +18,30 @@ pipeline {
     stages{
         stage("setenvironment"){
             steps{
-                switch(env.branch) {
-                    case 'staging':
-                        env.awscredentialId = "staging-credentials-id"
-                        break
-                    case 'dev':
-                        env.awscredentialId = "dev-credentials-id"
-                        break 
-                    case 'main':
-                        env.awscredentialId = "d85fd0d8-4b1f-4ddd-a32d-66bd62c3edda"
-                        break        
+                script {
+                    switch(env.branch) {
+                        case 'staging':
+                            env.awscredentialId = "staging-credentials-id"
+                            break
+                        case 'dev':
+                            env.awscredentialId = "dev-credentials-id"
+                            break 
+                        case 'main':
+                            env.awscredentialId = "d85fd0d8-4b1f-4ddd-a32d-66bd62c3edda"
+                            break        
+                    }
                 }
+                
             }
         }
         stage("getstack"){
             steps{
                 withAWS(credentials: "${awscredentialId}",region: "${region}"){
-                    def outputs = cfnDescribe(stack:"${stackname}")
-                    echo "${output}"
+                    script {
+                        def outputs = cfnDescribe(stack:"${stackname}")
+                        sh 'echo "${output}"'
+                    }
+                    
                 }
             }
         }
