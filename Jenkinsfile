@@ -116,7 +116,7 @@ pipeline {
                     def response = httpRequest url:"${url}"
                     echo "Response is ${response.status}"
 
-                    if ("${response.status}" != 200) {
+                    if ("${response.status}" != "200") {
                          currentBuild.result = "UNSTABLE"
                     }
                 }
