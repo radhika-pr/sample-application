@@ -115,6 +115,10 @@ pipeline {
                     final String url = "http://${dns}"
                     def response = httpRequest url:"${url}"
                     echo "Response is ${response.status}"
+
+                    if ("${response.status}" != "200") {
+                         currentBuild.result = "UNSTABLE"
+                    }
                 }
                 echo "Clean Workspace"
                 cleanWs()
