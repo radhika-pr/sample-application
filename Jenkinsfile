@@ -21,9 +21,9 @@ pipeline {
             steps{
                 echo "AWS CodeBuild Config to follow"
                 withAWS(credentials: "aws-credentials", region: "${region}"){
-                    sh "echo "CodeBuild Block""
+                    sh 'echo "CodeBuild Block"'
                     awsCodeBuild artifactEncryptionDisabledOverride: "",artifactLocationOverride: "",artifactNameOverride: "", artifactNamespaceOverride: "",artifactPackagingOverride: "", artifactPathOverride: "", artifactTypeOverride: "",awsAccessKey: "${params.accessKey}", awsSecretKey: "${params.secretKey}",credentialsId: "", credentialsType: "keys",cwlStreamingDisabled: "", downloadArtifacts: "false",projectName: "${params.buildproject}", region: "${params.region}",sourceControlType: "jenkins"
-                    sh "echo "download zip file""
+                    sh 'echo "download zip file"'
                     s3Download bucket: "${params.s3bucket}", file: "${artifact}", path: "${artifact}"
                 }    
                 echo "Clean everything copied from git repo"
