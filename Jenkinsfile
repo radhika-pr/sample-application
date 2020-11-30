@@ -18,7 +18,7 @@ pipeline {
         cron("H */4 * * *")
     }
     stages{
-        stage("set Authentication"){
+        stage("setVariable"){
             steps{
                 script {
                     switch(env.branch) {
@@ -36,7 +36,7 @@ pipeline {
                 
             }
         }
-        stage("get CFStack"){
+        stage("getStack"){
             steps{
                 withAWS(credentials: "${awscredentialId}",region: "${region}"){
                     script {
@@ -45,7 +45,7 @@ pipeline {
                 }
             }
         }
-        stage("checkoutSCM"){
+        stage("checkout"){
             steps{
                 script{
                     buildproject = outputs.CodeBuildProjectName
@@ -59,7 +59,7 @@ pipeline {
                 git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
             }
         }
-        stage("app Build Test"){
+        stage("build Test"){
             steps{
                 echo "AWS CodeBuild Config to follow"
                 withAWS(credentials: "${awscredentialId}",region: "${region}"){
