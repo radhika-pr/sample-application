@@ -113,9 +113,9 @@ pipeline {
                     echo "sleep for 5min to get application ready"
                     sleep 300
                     final String url = "http://${dns}"
-                    int status = sh(script: "curl -sLI -w '%{http_code}' $url -o /dev/null", returnStdout: true)
+                    def response = httpRequest "${url}"
 
-                    if (status != 200 && status != 201) {
+                    if (response != 200 && status != 201) {
                          error("Returned status code = $status when calling $url")
                     }
                     echo response
