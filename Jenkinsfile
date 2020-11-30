@@ -1,4 +1,3 @@
-def output
 pipeline {
     agent any
     environment{
@@ -19,10 +18,6 @@ pipeline {
     stages{
         stage("setenvironment"){
             steps{
-                withAWS(credentials: "${awscredentialId}",region: "${region}"){
-                    output = cfnDescribe(stack:"${stackname}")
-                    echo "${output}"
-                }
                 switch(env.branch) {
                     case 'staging':
                         env.awscredentialId = "staging-credentials-id"
@@ -33,6 +28,14 @@ pipeline {
                     case 'main':
                         env.awscredentialId = "d85fd0d8-4b1f-4ddd-a32d-66bd62c3edda"
                         break        
+                }
+            }
+        }
+        stage("getstack"){
+            steps{
+                withAWS(credentials: "${awscredentialId}",region: "${region}"){
+                    def outputs = cfnDescribe(stack:"${stackname}")
+                    echo "${output}"
                 }
             }
         }
