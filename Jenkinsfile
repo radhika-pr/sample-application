@@ -64,7 +64,7 @@ pipeline {
                 echo "AWS CodeBuild Config to follow"
                 withAWS(credentials: "${awscredentialId}",region: "${region}"){
                     sh 'echo "CodeBuild Block"'
-                    awsCodeBuild artifactEncryptionDisabledOverride: "", artifactLocationOverride: "", artifactNameOverride: "", artifactNamespaceOverride: "", artifactPackagingOverride: "", artifactPathOverride: "", artifactTypeOverride: "", buildSpecFile: "", buildTimeoutOverride: "", cacheLocationOverride: "", cacheModesOverride: "", cacheTypeOverride: "", certificateOverride: "", cloudWatchLogsGroupNameOverride: "", cloudWatchLogsStatusOverride: "", cloudWatchLogsStreamNameOverride: "", computeTypeOverride: "", credentialsId: "", credentialsType: "keys", cwlStreamingDisabled: "", downloadArtifacts: "false", downloadArtifactsRelativePath: "", envParameters: "", envVariables: "", environmentTypeOverride: "", exceptionFailureMode: "", gitCloneDepthOverride: "", imageOverride: "", insecureSslOverride: "", localSourcePath: "", overrideArtifactName: "", privilegedModeOverride: "", projectName: "${buildproject}", proxyHost: "", proxyPort: "", region: "${params.region}", reportBuildStatusOverride: "", s3LogsEncryptionDisabledOverride: "", s3LogsLocationOverride: "", s3LogsStatusOverride: "", secondaryArtifactsOverride: "", secondarySourcesOverride: "", secondarySourcesVersionOverride: "", serviceRoleOverride: "", sourceControlType: "jenkins", sourceLocationOverride: "", sourceTypeOverride: "", sourceVersion: "", sseAlgorithm: "", workspaceSubdir: ""
+                    awsCodeBuild  credentialsType: "keys", downloadArtifacts: "false",  projectName: "${buildproject}", region: "${params.region}", sourceControlType: "jenkins"
                     sh 'echo "download zip file"'
                     s3Download(bucket: "${s3bucket}", file: "${artifact}", path: "${artifact}",force:true)
                 }    
@@ -104,7 +104,7 @@ pipeline {
                 script {
                     sleep 180
                     final String url = "http://${dns}"
-                    int status = sh(script: "curl -sLI -w '%{http_code}' $url -o /dev/null", returnStdout: true)
+                    int status = sh(script: 'curl -sLI -w "%{http_code}" $url -o /dev/null', returnStdout: true)
 
                     if (status != 200 && status != 201) {
                          error("Returned status code = $status when calling $url")
