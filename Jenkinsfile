@@ -3,15 +3,16 @@ pipeline {
     agent any
     environment{
         artifact = "testapp_build.zip"
+        buildproject = "sampleproject"
+        codedeployapp = "deployapp"
+        codedeploygroup = "samplegroup"
+        s3bucket ="cfns3"
     }
     parameters {
         choice(name: "branch", choices: ["main", "staging", "dev"], description: "")
         string(name: "s3bucket", defaultValue: "", description: "S3 bucket for artifact")
         string(name: "stackname", defaultValue: "", description: "Cloudformation stack name")
-        string(name: "buildproject", defaultValue: "", description: "Code Build Project name")
         string(name: "region", defaultValue: "eu-central-1", description: "Artifact Name with extension")
-        string(name: "codedeployapp", defaultValue: "", description: "Artifact Name with extension")
-        string(name: "codedeploygroup", defaultValue: "", description: "Artifact Name with extension")
     }
     triggers {
         cron("H */4 * * *")
@@ -47,7 +48,10 @@ pipeline {
         stage("checkout"){
             steps{
                 script{
-                    echo outputs.CodeBuildProjectName
+                    env.buildproject = outputs.CodeBuildProjectName
+                    env.codedeployapp = outputs.CodeDeployApplicationName
+                    env.codedeploygroup = outputs.CodeDeployDeploymentGroup
+                    env.s3bucket = outputs.S3BucketName
                 }
                 
                 echo "checkout the git repo from branch ${params.branch}"
