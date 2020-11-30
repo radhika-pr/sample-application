@@ -104,8 +104,11 @@ pipeline {
                 script {
                     sleep 180
                     final String url = "http://${dns}"
-                    final String response = sh(script: "curl -s $url", returnStdout: true).trim()
+                    int status = sh(script: "curl -sLI -w '%{http_code}' $url -o /dev/null", returnStdout: true)
 
+                    if (status != 200 && status != 201) {
+                         error("Returned status code = $status when calling $url")
+                    }
                     echo response
                 }
             }
