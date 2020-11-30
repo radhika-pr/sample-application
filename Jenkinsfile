@@ -10,7 +10,6 @@ pipeline {
     }
     parameters {
         choice(name: "branch", choices: ["main", "staging", "dev"], description: "")
-        string(name: "s3bucket", defaultValue: "", description: "S3 bucket for artifact")
         string(name: "stackname", defaultValue: "", description: "Cloudformation stack name")
         string(name: "region", defaultValue: "eu-central-1", description: "Artifact Name with extension")
     }
@@ -63,9 +62,9 @@ pipeline {
                 echo "AWS CodeBuild Config to follow"
                 withAWS(credentials: "${awscredentialId}",region: "${region}"){
                     sh 'echo "CodeBuild Block"'
-                    awsCodeBuild artifactEncryptionDisabledOverride: "", artifactLocationOverride: "", artifactNameOverride: "", artifactNamespaceOverride: "", artifactPackagingOverride: "", artifactPathOverride: "", artifactTypeOverride: "", buildSpecFile: "", buildTimeoutOverride: "", cacheLocationOverride: "", cacheModesOverride: "", cacheTypeOverride: "", certificateOverride: "", cloudWatchLogsGroupNameOverride: "", cloudWatchLogsStatusOverride: "", cloudWatchLogsStreamNameOverride: "", computeTypeOverride: "", credentialsId: "", credentialsType: "keys", cwlStreamingDisabled: "", downloadArtifacts: "false", downloadArtifactsRelativePath: "", envParameters: "", envVariables: "", environmentTypeOverride: "", exceptionFailureMode: "", gitCloneDepthOverride: "", imageOverride: "", insecureSslOverride: "", localSourcePath: "", overrideArtifactName: "", privilegedModeOverride: "", projectName: "${params.buildproject}", proxyHost: "", proxyPort: "", region: "${params.region}", reportBuildStatusOverride: "", s3LogsEncryptionDisabledOverride: "", s3LogsLocationOverride: "", s3LogsStatusOverride: "", secondaryArtifactsOverride: "", secondarySourcesOverride: "", secondarySourcesVersionOverride: "", serviceRoleOverride: "", sourceControlType: "jenkins", sourceLocationOverride: "", sourceTypeOverride: "", sourceVersion: "", sseAlgorithm: "", workspaceSubdir: ""
+                    awsCodeBuild artifactEncryptionDisabledOverride: "", artifactLocationOverride: "", artifactNameOverride: "", artifactNamespaceOverride: "", artifactPackagingOverride: "", artifactPathOverride: "", artifactTypeOverride: "", buildSpecFile: "", buildTimeoutOverride: "", cacheLocationOverride: "", cacheModesOverride: "", cacheTypeOverride: "", certificateOverride: "", cloudWatchLogsGroupNameOverride: "", cloudWatchLogsStatusOverride: "", cloudWatchLogsStreamNameOverride: "", computeTypeOverride: "", credentialsId: "", credentialsType: "keys", cwlStreamingDisabled: "", downloadArtifacts: "false", downloadArtifactsRelativePath: "", envParameters: "", envVariables: "", environmentTypeOverride: "", exceptionFailureMode: "", gitCloneDepthOverride: "", imageOverride: "", insecureSslOverride: "", localSourcePath: "", overrideArtifactName: "", privilegedModeOverride: "", projectName: "${buildproject}", proxyHost: "", proxyPort: "", region: "${params.region}", reportBuildStatusOverride: "", s3LogsEncryptionDisabledOverride: "", s3LogsLocationOverride: "", s3LogsStatusOverride: "", secondaryArtifactsOverride: "", secondarySourcesOverride: "", secondarySourcesVersionOverride: "", serviceRoleOverride: "", sourceControlType: "jenkins", sourceLocationOverride: "", sourceTypeOverride: "", sourceVersion: "", sseAlgorithm: "", workspaceSubdir: ""
                     sh 'echo "download zip file"'
-                    s3Download(bucket: "${params.s3bucket}", file: "${artifact}", path: "${artifact}",force:true)
+                    s3Download(bucket: "${s3bucket}", file: "${artifact}", path: "${artifact}",force:true)
                 }    
                 echo "Clean everything copied from git repo"
                 fileOperations([fileDeleteOperation(
@@ -81,7 +80,7 @@ pipeline {
             steps{
                 withAWS(credentials: "${awscredentialId}", region: "${region}"){
                     createDeployment(
-                        s3Bucket: "${params.s3bucket}",
+                        s3Bucket: "${s3bucket}",
                         s3Key: "${artifact}",
                         s3BundleType: "zip", // [Valid values: tar | tgz | zip | YAML | JSON]
                         applicationName: "${codedeployapp}",
