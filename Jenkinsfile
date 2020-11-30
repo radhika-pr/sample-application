@@ -18,7 +18,7 @@ pipeline {
         cron("H */4 * * *")
     }
     stages{
-        stage("setenvironment"){
+        stage("set Authentication"){
             steps{
                 script {
                     switch(env.branch) {
@@ -36,7 +36,7 @@ pipeline {
                 
             }
         }
-        stage("getstack"){
+        stage("get CFStack"){
             steps{
                 withAWS(credentials: "${awscredentialId}",region: "${region}"){
                     script {
@@ -45,7 +45,7 @@ pipeline {
                 }
             }
         }
-        stage("checkout"){
+        stage("checkoutSCM"){
             steps{
                 script{
                     buildproject = outputs.CodeBuildProjectName
@@ -59,7 +59,7 @@ pipeline {
                 git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
             }
         }
-        stage("prebuild"){
+        stage("app Build Test"){
             steps{
                 echo "AWS CodeBuild Config to follow"
                 withAWS(credentials: "${awscredentialId}",region: "${region}"){
@@ -68,14 +68,27 @@ pipeline {
                     sh 'echo "download zip file"'
                     s3Download(bucket: "${s3bucket}", file: "${artifact}", path: "${artifact}",force:true)
                 }    
+            }
+        }
+        stage("deploy ready"){
+            steps{
                 echo "Clean everything copied from git repo"
                 fileOperations([fileDeleteOperation(
                     excludes: "${artifact}",
                     includes: "*"
                 )])
+                echo "Unzip artifact"
+                fileOperations([fileUnZipOperation(
+                    filePath: "${artifact}",
+                    targetLocation: "./"
+                )])
+                echo "remove zip artifact"
+                fileOperations([fileDeleteOperation(
+                    includes: "${artifact}"
+                )])
             }
         }
-        stage("build"){
+        stage("app Deployment"){
             when {
             branch 'main'
             }
@@ -97,7 +110,7 @@ pipeline {
                 }
             }
         }
-        stage("postbuild"){
+        stage("post Deployment"){
             steps{
                 echo "Clean Workspace"
                 cleanWs()
