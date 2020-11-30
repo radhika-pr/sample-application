@@ -41,13 +41,12 @@ pipeline {
                     script {
                         outputs = cfnDescribe(stack:"${stackname}")
                     }
-                    
                 }
             }
         }
         stage("checkout"){
             steps{
-                echo "${outputs}"
+                echo "${outputs[CodeBuildProjectName]}"
                 echo "checkout the git repo from branch ${params.branch}"
                 git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
             }
