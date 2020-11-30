@@ -1,11 +1,13 @@
 pipeline {
     agent any
+    environment{
+        artifact = "testapp_buid.zip"
+    }
     parameters {
         choice(name: "branch", choices: ["main", "staging", "dev"], description: "")
         string(name: "s3bucket", defaultValue: "", description: "S3 bucket for artifact")
         string(name: "buildproject", defaultValue: "", description: "Code Build Project name")
         string(name: "region", defaultValue: "eu-central-1", description: "Artifact Name with extension")
-        string(name: "artifact", defaultValue: "", description: "Artifact Name with extension")
     }
     triggers {
         cron("H */4 * * *")
@@ -24,7 +26,7 @@ pipeline {
                     sh 'echo "CodeBuild Block"'
                     awsCodeBuild artifactEncryptionDisabledOverride: "", artifactLocationOverride: "", artifactNameOverride: "", artifactNamespaceOverride: "", artifactPackagingOverride: "", artifactPathOverride: "", artifactTypeOverride: "", buildSpecFile: "", buildTimeoutOverride: "", cacheLocationOverride: "", cacheModesOverride: "", cacheTypeOverride: "", certificateOverride: "", cloudWatchLogsGroupNameOverride: "", cloudWatchLogsStatusOverride: "", cloudWatchLogsStreamNameOverride: "", computeTypeOverride: "", credentialsId: "", credentialsType: "keys", cwlStreamingDisabled: "", downloadArtifacts: "false", downloadArtifactsRelativePath: "", envParameters: "", envVariables: "", environmentTypeOverride: "", exceptionFailureMode: "", gitCloneDepthOverride: "", imageOverride: "", insecureSslOverride: "", localSourcePath: "", overrideArtifactName: "", privilegedModeOverride: "", projectName: "${params.buildproject}", proxyHost: "", proxyPort: "", region: "${params.region}", reportBuildStatusOverride: "", s3LogsEncryptionDisabledOverride: "", s3LogsLocationOverride: "", s3LogsStatusOverride: "", secondaryArtifactsOverride: "", secondarySourcesOverride: "", secondarySourcesVersionOverride: "", serviceRoleOverride: "", sourceControlType: "jenkins", sourceLocationOverride: "", sourceTypeOverride: "", sourceVersion: "", sseAlgorithm: "", workspaceSubdir: ""
                     sh 'echo "download zip file"'
-                    s3Download(bucket: "${params.s3bucket}", file: "${artifact}", path: "test/${artifact}",force:true)
+                    s3Download(bucket: "${params.s3bucket}", file: "${artifact}", path: "${artifact}",force:true)
                 }    
                 echo "Clean everything copied from git repo"
                 fileOperations([fileDeleteOperation(
