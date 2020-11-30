@@ -20,7 +20,7 @@ pipeline {
         stage("prebuild"){
             steps{
                 echo "AWS CodeBuild Config to follow"
-                withAWS(role:"jenkins-instance-role",region: "${region}"){
+                withAWS(region: "${region}"){
                     sh 'echo "CodeBuild Block"'
                     awsCodeBuild artifactEncryptionDisabledOverride: "",artifactLocationOverride: "",artifactNameOverride: "", artifactNamespaceOverride: "",artifactPackagingOverride: "", artifactPathOverride: "", artifactTypeOverride: "",awsAccessKey: "${params.accessKey}", awsSecretKey: "${params.secretKey}",credentialsId: "", credentialsType: "keys",cwlStreamingDisabled: "", downloadArtifacts: "false",projectName: "${params.buildproject}", region: "${params.region}",sourceControlType: "jenkins"
                     sh 'echo "download zip file"'
@@ -44,7 +44,7 @@ pipeline {
                 fileOperations([fileDeleteOperation(
                     includes: "${artifact}"
                 )])
-                withAWS(role:"jenkins-instance-role", region: "${region}"){
+                withAWS(region: "${region}"){
                     createDeployment(
                         s3Bucket: "${params.s3bucket}",
                         s3Key: "artifacts/SimpleWebApp.zip",
