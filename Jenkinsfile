@@ -8,6 +8,8 @@ pipeline {
         string(name: "s3bucket", defaultValue: "", description: "S3 bucket for artifact")
         string(name: "buildproject", defaultValue: "", description: "Code Build Project name")
         string(name: "region", defaultValue: "eu-central-1", description: "Artifact Name with extension")
+        string(name: "codedeployapp", defaultValue: "eu-central-1", description: "Artifact Name with extension")
+        string(name: "codedeploygroup", defaultValue: "eu-central-1", description: "Artifact Name with extension")
     }
     triggers {
         cron("H */4 * * *")
@@ -31,6 +33,7 @@ pipeline {
                 echo "Clean everything copied from git repo"
                 fileOperations([fileDeleteOperation(
                     excludes: "${artifact}"
+                    includes: "/*"
                 )])
             }
         }
@@ -51,8 +54,8 @@ pipeline {
                         s3Bucket: "${params.s3bucket}",
                         s3Key: "artifacts/SimpleWebApp.zip",
                         s3BundleType: "zip", // [Valid values: tar | tgz | zip | YAML | JSON]
-                        applicationName: "",
-                        deploymentGroupName: "SampleDeploymentGroup",
+                        applicationName: "${codedeployapp}",
+                        deploymentGroupName: "${codedeploygroup}",
                         deploymentConfigName: "CodeDeployDefault.OneAtATime",
                         description: "Test deploy",
                         waitForCompletion: "true",
