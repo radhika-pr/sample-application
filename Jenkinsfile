@@ -109,10 +109,9 @@ pipeline {
         }
         stage("post Deployment"){
             steps{
-                echo "Clean Workspace"
-                cleanWs()
                 script {
-                    sleep 180
+                    echo "sleep for 5min to get application ready"
+                    sleep 300
                     final String url = "http://${dns}"
                     int status = sh(script: "curl -sLI -w '%{http_code}' $url -o /dev/null", returnStdout: true)
 
@@ -121,6 +120,8 @@ pipeline {
                     }
                     echo response
                 }
+                echo "Clean Workspace"
+                cleanWs()
             }
         }
     }
