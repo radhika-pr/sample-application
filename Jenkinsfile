@@ -30,7 +30,7 @@ pipeline {
                 }    
                 echo "Clean everything copied from git repo"
                 fileOperations([fileDeleteOperation(
-                    includes: "*"
+                    excludes: "${artifact}"
                 )])
             }
         }
