@@ -7,6 +7,7 @@ pipeline {
         codedeployapp = "deployapp"
         codedeploygroup = "samplegroup"
         s3bucket ="cfns3"
+        dns = "elb-dns"
     }
     parameters {
         choice(name: "branch", choices: ["main", "staging", "dev"], description: "")
@@ -51,6 +52,7 @@ pipeline {
                     codedeployapp = outputs.CodeDeployApplicationName
                     codedeploygroup = outputs.CodeDeployDeploymentGroup
                     s3bucket = outputs.S3BucketName
+                    dns = outputs.ELBDNSName
                 }
                 
                 echo "checkout the git repo from branch ${params.branch}"
@@ -99,6 +101,13 @@ pipeline {
             steps{
                 echo "Clean Workspace"
                 cleanWs()
+                script {
+                    sleep 180
+                    final String url = "http://${dns}"
+                    final String response = sh(script: "curl -s $url", returnStdout: true).trim()
+
+                    echo response
+                }
             }
         }
     }
