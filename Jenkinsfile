@@ -115,7 +115,7 @@ pipeline {
                     final String url = "http://${dns}"
                     def response = httpRequest "${url}"
 
-                    if (response != 200 && status != 201) {
+                    if ("${response.status}" != 200) {
                          error("Returned status code = $status when calling $url")
                     }
                     echo response
