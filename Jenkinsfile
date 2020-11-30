@@ -89,9 +89,6 @@ pipeline {
             }
         }
         stage("app Deployment"){
-            when {
-            branch 'main'
-            }
             steps{
                 withAWS(credentials: "${awscredentialId}", region: "${region}"){
                     createDeployment(
@@ -117,7 +114,7 @@ pipeline {
                 script {
                     sleep 180
                     final String url = "http://${dns}"
-                    int status = sh(script: 'curl -sLI -w "%{http_code}" $url -o /dev/null', returnStdout: true)
+                    int status = sh(script: "curl -sLI -w '%{http_code}' $url -o /dev/null", returnStdout: true)
 
                     if (status != 200 && status != 201) {
                          error("Returned status code = $status when calling $url")
