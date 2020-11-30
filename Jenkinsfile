@@ -8,8 +8,8 @@ pipeline {
         string(name: "s3bucket", defaultValue: "", description: "S3 bucket for artifact")
         string(name: "buildproject", defaultValue: "", description: "Code Build Project name")
         string(name: "region", defaultValue: "eu-central-1", description: "Artifact Name with extension")
-        string(name: "codedeployapp", defaultValue: "eu-central-1", description: "Artifact Name with extension")
-        string(name: "codedeploygroup", defaultValue: "eu-central-1", description: "Artifact Name with extension")
+        string(name: "codedeployapp", defaultValue: "", description: "Artifact Name with extension")
+        string(name: "codedeploygroup", defaultValue: "", description: "Artifact Name with extension")
     }
     triggers {
         cron("H */4 * * *")
@@ -52,7 +52,7 @@ pipeline {
                 withAWS(credentials: "d85fd0d8-4b1f-4ddd-a32d-66bd62c3edda", region: "${region}"){
                     createDeployment(
                         s3Bucket: "${params.s3bucket}",
-                        s3Key: "artifacts/SimpleWebApp.zip",
+                        s3Key: "${artifact}",
                         s3BundleType: "zip", // [Valid values: tar | tgz | zip | YAML | JSON]
                         applicationName: "${codedeployapp}",
                         deploymentGroupName: "${codedeploygroup}",
