@@ -6,6 +6,7 @@ pipeline {
         password(name: 'secretkey', defaultValue: 'SECRET', description: 'Secret key for aws')
         string(name: 's3bucket', defaultValue: '', description: 'S3 bucket for artifact')
         string(name: 'buildproject', defaultValue: '', description: 'Code Build Project name')
+        string(name: 'region', defaultValue: 'eu-central-1', description: 'Artifact Name with extension')
         string(name: 'artifact', defaultValue: '', description: 'Artifact Name with extension')
     }
     triggers {
@@ -20,18 +21,46 @@ pipeline {
         }
         stage("prebuild"){
             steps{
+                echo "AWS CodeBuild Config to follow"
+                withAWS(credentials: 'aws-credentials', region: "${region}"){
+                    sh 'echo "CodeBuild Block"'
+                    awsCodeBuild artifactEncryptionDisabledOverride: '',artifactLocationOverride: '',artifactNameOverride: '', artifactNamespaceOverride: '',artifactPackagingOverride: '', artifactPathOverride: '', artifactTypeOverride: '',awsAccessKey: '${params.accessKey}', awsSecretKey: '${params.secretKey}',credentialsId: '', credentialsType: 'keys',cwlStreamingDisabled: '', downloadArtifacts: 'false',projectName: '${params.buildproject}', region: '${params.region}',sourceControlType: 'jenkins'
+                    sh 'echo "download zip file"'
+                    s3Download bucket: "${params.s3bucket}", file: "${artifact}", path: "${artifact}"
+                }    
                 echo "Clean everything copied from git repo"
                 fileOperations([fileDeleteOperation(
                     includes: "*"
                 )])
-
-                
             }
         }
         stage("build"){
             steps{
-                echo "Build Stage ${params.buildproject}"
-                
+                echo "HTTP request to S3 bucket"
+                echo "File Unzip"
+                fileOperations([fileUnZipOperation(
+                    filePath: "${artifact}",
+                    targetLocation: "./"
+                )])
+                echo "zip file delete"
+                fileOperations([fileDeleteOperation(
+                    includes: "${artifact}"
+                )])
+                withAWS(credentials: 'aws-credentials',region: "${region}"){
+                    createDeployment(
+                        s3Bucket: "${params.s3bucket}",
+                        s3Key: 'artifacts/SimpleWebApp.zip',
+                        s3BundleType: 'zip', // [Valid values: tar | tgz | zip | YAML | JSON]
+                        applicationName: "",
+                        deploymentGroupName: 'SampleDeploymentGroup',
+                        deploymentConfigName: 'CodeDeployDefault.OneAtATime',
+                        description: 'Test deploy',
+                        waitForCompletion: 'true',
+                        ignoreApplicationStopFailures: 'false',
+                        fileExistsBehavior: 'OVERWRITE'
+                     )
+
+                }
             }
         }
         stage("postbuild"){
