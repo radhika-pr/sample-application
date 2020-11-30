@@ -1,3 +1,4 @@
+def outputs
 pipeline {
     agent any
     environment{
@@ -38,8 +39,7 @@ pipeline {
             steps{
                 withAWS(credentials: "${awscredentialId}",region: "${region}"){
                     script {
-                        def outputs = cfnDescribe(stack:"${stackname}")
-                        sh 'echo "${output}"'
+                        outputs = cfnDescribe(stack:"${stackname}")
                     }
                     
                 }
@@ -47,6 +47,7 @@ pipeline {
         }
         stage("checkout"){
             steps{
+                echo "${outputs}"
                 echo "checkout the git repo from branch ${params.branch}"
                 git url: "https://github.com/radhika-pr/sample-application.git" , branch: "${params.branch}"
             }
