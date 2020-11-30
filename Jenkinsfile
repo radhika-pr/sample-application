@@ -113,9 +113,9 @@ pipeline {
                     echo "sleep for 5min to get application ready"
                     sleep 300
                     final String url = "http://${dns}"
-                    def response = httpRequest "${url}"
+                    def response = httpRequest url:"${url}", validResponseContent: 'OK'
 
-                    if ("${response.status}" != 200) {
+                    if ("${response.status}" != "200") {
                          error("Returned status code = $status when calling $url")
                     }
                     echo response
