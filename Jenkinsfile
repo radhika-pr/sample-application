@@ -1,3 +1,4 @@
+def output
 pipeline {
     agent any
     environment{
@@ -18,7 +19,7 @@ pipeline {
     stages{
         stage("set environment"){
             steps{
-                def output = cfnDescribe(stack:"${stackname}")
+                output = cfnDescribe(stack:"${stackname}")
                 echo "${output}"
                 switch(env.branch) {
                     case 'staging':
